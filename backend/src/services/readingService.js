@@ -1,15 +1,36 @@
-const Reading = require('../models/Reading');
+const Reading = require("../models/Reading");
 
-exports.create = data => Reading.create(data);
-
-exports.list = async (page = 1, limit = 20) => {
-    const skip = (page - 1) * limit;
-    const docs = await Reading.find()
-                              .sort({ timestamp: -1 })
-                              .skip(skip)
-                              .limit(limit)
-    const total = await Reading.countDocuments();
-    return { docs, total, page, pages: Math.ceil(total/limit) };
+exports.create = data => {
+    return Reading.create(data);
 };
 
-exports.latest = () => Reading.findOne().sort({ timestamp: -1 });
+exports.list = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+
+    const { rows: docs, count: total } = await Reading.findAndCountAll({
+        order: [['timestamp', 'DESC']],
+        limit,
+        offset
+    });
+
+    const pages = Math.ceil(total / limit);
+    return { docs, total, page, pages };
+};
+
+exports.latest = () => {
+    return Reading.findOne({ order: [['timestamp', 'DESC']] });
+};
+
+exports.getById = id => {
+    return Reading.findByPk(id);
+};
+
+exports.update = async (id, data) => {
+    const reading = await Reading.findByPk(id);
+    if (!reading) return null;
+    return reading.update(data);
+};
+
+exports.remove = id => {
+    return Reading.destroy({ where: { id_lectura: id }});
+};
