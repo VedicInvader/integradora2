@@ -4,28 +4,36 @@ const express = require('express');
 const cors = require('cors');
 const { connectDB } = require('../src/config/db');
 const readingRt = require('../src/routes/readingRoutes');
+const authRt = require('../src/routes/authRoutes');
 
 const app = express();
 
-//para los middlewares
+//middlewares
 app.use(cors());
 app.use(express.json());
 
-//conexion base de datos
+//conexion bd
 connectDB();
 
-//routes
+//rutas
 app.use('/api/readings', readingRt);
+app.use('/api/auth', authRt);
 
-//errores
+const userRoutes = require('../src/routes/userRoutes');
+app.use('/api/users', userRoutes);
+
+const sensorRoutes = require('../src/routes/sensorRoutes');
+app.use('/api/sensores', sensorRoutes);
+
+//manejo de errores
 app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(err.status || 500).json({ error: err.message });
+  console.error(err);
+  res.status(err.status || 500).json({ error: err.message });
 });
 
-//levantar el server
+//servidor
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-    console.log(`El server está corriendo en el puerto ${PORT}`);
+  console.log(`El server está corriendo en el puerto ${PORT}`);
 });
 

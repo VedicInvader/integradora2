@@ -8,7 +8,7 @@ router.post('/', auth, ctrl.postReading);
 router.get('/', ctrl.getReadings);
 router.get('/latest', ctrl.getLatest);
 
-//crud nuevo
+//crud bd
 router.get('/:id', ctrl.getReading);
 router.put('/:id', auth, ctrl.updateReading);
 router.delete('/:id', auth, ctrl.deleteReading);
