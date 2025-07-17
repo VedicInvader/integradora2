@@ -1,0 +1,151 @@
+:root {
+  --primary: #0A7764;
+  --secondary: #D78909;
+  --white: #FFFFFF;
+  --text-dark: #2C2C2C;
+  --text-medium: #5A5A5A;
+  --background: #F8F9FA;
+  --card-background: #FFFFFF;
+  --shadow: #E3E3E3;
+  --accent: #F0F4F3;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.mainContainer {
+  background-color: var(--background);
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1200px; /* Limitar ancho máximo para mejor legibilidad */
+  margin: 0 auto; /* Centrar horizontalmente */
+}
+
+.fixedHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--primary);
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  z-index: 1000;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  margin-right: 16px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+}
+
+.universityText {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--white);
+  margin-left: 10px;
+}
+
+.scrollContainer {
+  padding-top: 80px;
+  width: 100%;
+  padding-left: 10px;  /* Añadido para evitar que el contenido quede pegado a los bordes */
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+.headerSpacer {
+  height: 80px;
+}
+
+.infoSection {
+  padding: 20px;
+  text-align: center;
+}
+
+.locationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.locationText {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-left: 8px;
+}
+
+.stationContainer {
+  padding: 0 20px;
+}
+
+.stationCard {
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--shadow);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.stationDetails {
+  margin-top: 10px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  gap: 10px;
+  flex-wrap: wrap; /* Añadido para que en pantallas pequeñas los items bajen y no generen overflow */
+}
+
+.detailItem {
+  flex: 1 1 calc(50% - 10px); /* Ajusta para tomar la mitad menos el gap */
+  background-color: var(--accent);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 140px; /* Para que no se achiquen demasiado */
+  box-sizing: border-box;
+}
+
+.detailLabel {
+  font-size: 12px;
+  color: var(--text-medium);
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.detailValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}

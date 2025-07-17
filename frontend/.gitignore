@@ -1,0 +1,27 @@
+# Dependencias
+node_modules/
+
+# Logs
+*.log
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+
+# Carpetas de build
+dist/
+build/
+
+# Cachés y archivos temporales
+.vite/
+.cache/
+*.tmp
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de lock editor o IDE
+.vscode/
+.idea/
