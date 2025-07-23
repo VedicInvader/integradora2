@@ -9,11 +9,11 @@ import {
   MdLocationOn,
   MdPerson,
 } from 'react-icons/md';
-import { Menu, X } from 'lucide-react';
-
 import './CSS/AboutScreen.css';
+import logoBuilders from './image/Logoooooo_LE_upscale_balanced_x4.jpg';
 
-const AboutScreen = () => {
+
+const AboutPage = () => {
   const [isWeb, setIsWeb] = useState(window.innerWidth > 768);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -26,157 +26,139 @@ const AboutScreen = () => {
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
   return (
-    <div className="container">
-      {/* Header */}
-      <header className={`navbar ${isWeb ? 'navbar-web' : ''}`}>
-        <div className="empty-space" />
-      </header>
+    <div className="about-container">
+      {/* Header con logo */}
+    <h1 className="about-title">Sobre Nosotros</h1>
 
-      {/* Drawer para navegación (solo simulación, sin rutas) */}
-      {drawerOpen && !isWeb && (
-        <nav
-          id="navigation-drawer"
-          className="drawer"
-          role="navigation"
-          aria-label="Navegación principal"
-        >
-          <ul className="drawer-list">
-            <li><a href="#proyecto" onClick={() => setDrawerOpen(false)}>Nuestro Proyecto</a></li>
-            <li><a href="#equipo" onClick={() => setDrawerOpen(false)}>Equipo de Desarrollo</a></li>
-            <li><a href="#contacto" onClick={() => setDrawerOpen(false)}>Contacto</a></li>
-          </ul>
-        </nav>
-      )}
+      <div className="about-header-logo">
+        <img src={logoBuilders} alt="Logo The Builder's Solution" className="about-logo-image" />
+      </div>
 
       {/* Header principal */}
-      <section className="header-section">
-        <div className="header-content">
-          <h1 className="main-title">Sobre Nosotros</h1>
-          <p className="main-subtitle">
-            Conoce más sobre nuestro sistema meteorológico y el equipo que lo desarrolla
+      <div className="about-header-content">
+     
+        <p className="about-section-subtitle">
+          Un sistema desarrollado con tecnología de vanguardia para el monitoreo meteorológico 
+        </p>
+        <div className="about-company-info">
+          <MdPerson size={40} color="#0A7764" className="about-company-icon" />
+          <p className="about-company-name">Por la empresa Veltrix Soluctions</p>
+        </div>
+      </div>
+
+      <section className="about-grid-container">
+        <article className={`about-card ${isWeb ? 'about-card-web' : ''}`}>
+          <header className="about-card-header">
+            <MdSchool size={28} color="#0A7764" className="about-card-icon" />
+            <h3 className="about-section-title">Universidad Tecnológica de Durango</h3>
+          </header>
+          <p className="about-text">
+            La Universidad Tecnológica de Durango es una institución comprometida con la excelencia académica
+            y la formación de profesionales capaces de enfrentar los retos del mundo actual.
           </p>
-        </div>
-      </section>
+        </article>
 
-      <main className={`content ${isWeb ? 'content-web' : ''}`}>
-        <div className="content-wrapper">
-          <section id="proyecto" className="section-header">
-            <h2 className="section-title-main">Nuestro Proyecto</h2>
-            <p className="section-subtitle">
-              Un sistema desarrollado con tecnología de vanguardia para el monitoreo meteorológico
-            </p>
-          </section>
+        <article className={`about-card ${isWeb ? 'about-card-web' : ''}`}>
+          <header className="about-card-header">
+            <MdCloud size={28} color="#0A7764" className="about-card-icon" />
+            <h3 className="about-section-title">Sistema Meteorológico</h3>
+          </header>
+          <p className="about-text">
+            Este sistema fue desarrollado por estudiantes de la UTD para monitorear las condiciones
+            climáticas en tiempo real y proporcionar datos históricos para investigación y análisis.
+          </p>
+        </article>
 
-          <section className="grid-container">
-            <article className={`card ${isWeb ? 'card-web' : ''}`}>
-              <header className="card-header">
-                <MdSchool size={28} color="#0A7764" className="card-icon" />
-                <h3 className="card-title">Universidad Tecnológica de Durango</h3>
-              </header>
-              <p className="card-text">
-                La Universidad Tecnológica de Durango es una institución comprometida con la excelencia académica
-                y la formación de profesionales capaces de enfrentar los retos del mundo actual.
-              </p>
-            </article>
-
-            <article className={`card ${isWeb ? 'card-web' : ''}`}>
-              <header className="card-header">
-                <MdCloud size={28} color="#0A7764" className="card-icon" />
-                <h3 className="card-title">Sistema Meteorológico</h3>
-              </header>
-              <p className="card-text">
-                Este sistema fue desarrollado por estudiantes y profesores de la UTD para monitorear las condiciones
-                climáticas en tiempo real y proporcionar datos históricos para investigación y análisis.
-              </p>
-            </article>
-
-            <article id="equipo" className={`card ${isWeb ? 'card-web' : ''}`}>
-              <header className="card-header">
-                <MdGroups size={28} color="#0A7764" className="card-icon" />
-                <h3 className="card-title">Equipo de Desarrollo</h3>
-              </header>
-              <div className="team-list">
-                {[
-                  'Solís Guereca Alina Alecxandra',
-                  'Sosa Villa Leslie Joselin',
-                  'Robles Quezada Jacqueline',
-                  'González Espino Marco Antonio',
-                  'Delgado Cabrera Miguel Angel',
-                ].map((member) => (
-                  <div className="team-member" key={member}>
-                    <div
-                      className="member-avatar"
-                      aria-label={`Avatar de ${member}`}
-                      role="img"
-                    >
-                      {member.split(' ')[0].charAt(0)}
-                      {member.split(' ')[1]?.charAt(0) || ''}
-                    </div>
-                    <div className="member-info">
-                      <p className="member-name">{member}</p>
-                      <p className="member-role">Desarrollador</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </article>
-
-            <article id="contacto" className={`card ${isWeb ? 'card-web' : ''}`}>
-              <header className="card-header">
-                <MdContactMail size={28} color="#0A7764" className="card-icon" />
-                <h3 className="card-title">Contacto</h3>
-              </header>
-              <div className="contact-list">
-                <div className="contact-item">
-                  <MdEmail size={24} color="#0A7764" className="contact-icon" />
-                  <div className="contact-content">
-                    <p className="contact-label">Email</p>
-                    <a
-                      href="mailto:meteorologia@utd.edu.mx"
-                      className="contact-link"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      meteorologia@utd.edu.mx
-                    </a>
-                  </div>
+        <article id="equipo" className={`about-card ${isWeb ? 'about-card-web' : ''}`}>
+          <header className="about-card-header">
+            <MdGroups size={28} color="#0A7764" className="about-card-icon" />
+            <h3 className="about-section-title">Equipo de Desarrollo</h3>
+          </header>
+          <div className="about-team-list">
+            {[
+              'Solís Guereca Alina Alecxandra',
+              'Sosa Villa Leslie Joselin',
+              'Robles Quezada Jacqueline',
+              'González Espino Marco Antonio',
+              'Delgado Cabrera Miguel Angel',
+            ].map((member) => (
+              <div className="about-team-member" key={member}>
+                <div
+                  className="about-member-avatar"
+                  aria-label={`Avatar de ${member}`}
+                  role="img"
+                >
+                  {member.split(' ')[0].charAt(0)}
+                  {member.split(' ')[1]?.charAt(0) || ''}
                 </div>
-                <div className="contact-item">
-                  <MdPhone size={24} color="#0A7764" className="contact-icon" />
-                  <div className="contact-content">
-                    <p className="contact-label">Teléfono</p>
-                    <a
-                      href="tel:+526181234567"
-                      className="contact-link"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      +52 618 123 4567
-                    </a>
-                  </div>
-                </div>
-                <div className="contact-item">
-                  <MdLocationOn size={24} color="#0A7764" className="contact-icon" />
-                  <div className="contact-content">
-                    <p className="contact-label">Dirección</p>
-                    <address className="contact-text">
-                      Durango - Mezquital, 34308 Gabino Santillán, Dgo.
-                    </address>
-                  </div>
+                <div className="about-member-info">
+                  <p className="about-member-name">{member}</p>
+                  <p className="about-member-role">Desarrollador</p>
                 </div>
               </div>
-            </article>
-          </section>
-        </div>
-      </main>
+            ))}
+          </div>
+        </article>
 
-      <footer className="footer">
-        <div className="footer-content">
-          <p className="footer-text">© 2023 Sistema Meteorológico UTD - Todos los derechos reservados</p>
-        </div>
-      </footer>
+        <article id="contacto" className={`about-card ${isWeb ? 'about-card-web' : ''}`}>
+  <header className="about-card-header">
+    <MdContactMail size={28} color="#0A7764" className="about-card-icon" />
+    <h3 className="about-section-title">Contacto</h3>
+  </header>
+  <div className="about-contact-list">
+    <div className="about-contact-description">
+      <p className="about-contact-text">
+        Estamos disponibles para responder tus consultas sobre el sistema meteorológico. 
+        ¡No dudes en ponerte en contacto con nuestro equipo!
+      </p>
     </div>
+    
+    <div className="about-contact-item">
+      <MdEmail size={24} color="#0A7764" className="about-contact-icon" />
+      <div className="about-contact-content">
+        <p className="about-contact-label">Correo Electrónico</p>
+        <a
+          href="mailto:meteorologia@utd.edu.mx"
+          className="about-contact-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          veltrixsolutionss@gmail.com
+        </a>
+        <p className="about-contact-note">
+          Respuesta en un plazo máximo de 48 horas hábiles
+        </p>
+      </div>
+    </div>
+    
+    <div className="about-contact-item">
+      <MdPhone size={24} color="#0A7764" className="about-contact-icon" />
+      <div className="about-contact-content">
+        <p className="about-contact-label">Teléfono</p>
+        <a
+          href="tel:+526181689465"
+          className="about-contact-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          +52 618 168 9465
+        </a>
+        <div className="about-contact-schedule">
+          <p className="about-contact-label">Horario de atención:</p>
+          <p className="about-contact-text">Lunes a Viernes: 9:00 AM - 5:00 PM</p>
+          <p className="about-contact-text">Sábados: 9:00 AM - 1:00 PM</p>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+   
+  </div>
+</article>
+    </section>
+  </div>
   );
 };
 
-export default AboutScreen;
+export default AboutPage;

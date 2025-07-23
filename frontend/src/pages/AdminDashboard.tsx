@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './CSS/AdminDashboard.css';
+import Swal from 'sweetalert2';
 
 interface User {
   id: number;
@@ -16,12 +17,14 @@ const AdminDashboard: React.FC = () => {
 
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   const [editId, setEditId] = useState<number | null>(null);
   const [editUsername, setEditUsername] = useState('');
   const [editPassword, setEditPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [searchTerm, setSearchTerm] = useState(''); 
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchUsers = async () => {
     if (!token) {
@@ -44,14 +47,34 @@ const AdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchUsers();
-    }
+    if (isLoggedIn) fetchUsers();
   }, [isLoggedIn, token]);
 
+  const validatePassword = (password: string): boolean => {
+    return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&._\-])[A-Za-z\d@$!%*?&._\-]{8,}$/.test(password);
+  };
+
   const handleCreateUser = async () => {
-    if (!newUsername || !newPassword) return alert('Completa todos los campos');
-    if (!token) return alert('No hay token de autenticación');
+    if (!newUsername || !newPassword) {
+      return Swal.fire('Campos incompletos', 'Por favor completa todos los campos.', 'warning');
+    }
+
+    if (!validatePassword(newPassword)) {
+      return Swal.fire('Contraseña insegura', 'Debe tener mínimo 8 caracteres, una letra, un número y un símbolo.', 'warning');
+    }
+
+    if (!token) return Swal.fire('No hay token de autenticación');
+
+    const result = await Swal.fire({
+      title: '¿Crear usuario?',
+      text: '¿Estás seguro de crear este nuevo usuario?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, crear',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const res = await fetch('http://localhost:4000/api/users', {
@@ -64,14 +87,14 @@ const AdminDashboard: React.FC = () => {
       });
       if (!res.ok) {
         const err = await res.json();
-        return alert(err.message || 'Error al crear usuario');
+        return Swal.fire(err.message || 'Error al crear usuario');
       }
       setNewUsername('');
       setNewPassword('');
       fetchUsers();
-      alert('Usuario creado');
+      Swal.fire('Usuario creado correctamente', '', 'success');
     } catch {
-      alert('Error en la conexión');
+      Swal.fire('Error en la conexión');
     }
   };
 
@@ -79,17 +102,34 @@ const AdminDashboard: React.FC = () => {
     setEditId(user.id);
     setEditUsername(user.username);
     setEditPassword('');
+    setShowPassword(false);
   };
 
   const cancelEdit = () => {
     setEditId(null);
     setEditUsername('');
     setEditPassword('');
+    setShowPassword(false);
   };
 
   const saveEdit = async () => {
-    if (!editUsername) return alert('Nombre requerido');
-    if (!token) return alert('No hay token de autenticación');
+    if (!editUsername) return Swal.fire('Nombre requerido');
+    if (editPassword && !validatePassword(editPassword)) {
+      return Swal.fire('Contraseña insegura', 'Debe tener mínimo 8 caracteres, una letra, un número y un símbolo.', 'warning');
+    }
+
+    if (!token) return Swal.fire('No hay token de autenticación');
+
+    const result = await Swal.fire({
+      title: '¿Confirmar edición?',
+      text: '¿Estás seguro de guardar los cambios de este usuario?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, guardar',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const res = await fetch(`http://localhost:4000/api/users/${editId}`, {
@@ -103,21 +143,37 @@ const AdminDashboard: React.FC = () => {
           password: editPassword || undefined,
         }),
       });
+
       if (!res.ok) {
         const err = await res.json();
-        return alert(err.message || 'Error al actualizar');
+        return Swal.fire(err.message || 'Error al actualizar');
       }
+
       cancelEdit();
       fetchUsers();
-      alert('Usuario actualizado');
+      Swal.fire('Guardado', 'Usuario actualizado correctamente', 'success');
     } catch {
-      alert('Error en la conexión');
+      Swal.fire('Error', 'Error en la conexión', 'error');
     }
   };
 
   const deleteUser = async (id: number) => {
-    if (!window.confirm('¿Seguro que quieres eliminar este usuario?')) return;
-    if (!token) return alert('No hay token de autenticación');
+    const confirmResult = await Swal.fire({
+      title: '¿Seguro que quieres eliminar este usuario?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (!confirmResult.isConfirmed) return;
+
+    if (!token) {
+      return Swal.fire('Error', 'No hay token de autenticación', 'error');
+    }
 
     try {
       const res = await fetch(`http://localhost:4000/api/users/${id}`, {
@@ -126,19 +182,24 @@ const AdminDashboard: React.FC = () => {
       });
       if (!res.ok) {
         const err = await res.json();
-        return alert(err.message || 'Error al eliminar');
+        return Swal.fire('Error', err.message || 'Error al eliminar', 'error');
       }
       fetchUsers();
-      alert('Usuario eliminado');
+      Swal.fire('Eliminado', 'El usuario ha sido eliminado.', 'success');
     } catch {
-      alert('Error en la conexión');
+      Swal.fire('Error', 'Error en la conexión', 'error');
     }
   };
 
-  //filtrar por nombre
   const filteredUsers = users.filter((u) =>
     u.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      Swal.fire('Acceso denegado. Inicia sesión.');
+    }
+  }, [isLoggedIn]);
 
   if (!isLoggedIn)
     return (
@@ -149,8 +210,6 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="container scrollContainer">
-      <h1 className="sectionTitle">Dashboard Admin - Usuarios</h1>
-
       <div className="card">
         <h2 className="sectionTitle">Crear Nuevo Usuario</h2>
         <div className="formRow">
@@ -161,13 +220,22 @@ const AdminDashboard: React.FC = () => {
             value={newUsername}
             onChange={(e) => setNewUsername(e.target.value)}
           />
-          <input
-            className="input"
-            type="password"
-            placeholder="Contraseña"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
+          <div className="password-wrapper">
+            <input
+              className="input"
+              type={showNewPassword ? 'text' : 'password'}
+              placeholder="Contraseña segura"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <button
+              className="toggle-password"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              type="button"
+            >
+              {showNewPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
           <button className="btn btn-primary" onClick={handleCreateUser}>
             Crear
           </button>
@@ -176,8 +244,6 @@ const AdminDashboard: React.FC = () => {
 
       <div className="card">
         <h2 className="sectionTitle">Usuarios Registrados</h2>
-
-        {/* barra de busqueda */}
         <input
           type="text"
           className="input"
@@ -217,13 +283,22 @@ const AdminDashboard: React.FC = () => {
                       />
                     </td>
                     <td>
-                      <input
-                        className="input"
-                        type="password"
-                        placeholder="Nueva contraseña (opcional)"
-                        value={editPassword}
-                        onChange={(e) => setEditPassword(e.target.value)}
-                      />
+                      <div className="password-wrapper">
+                        <input
+                          className="input"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Nueva contraseña (opcional)"
+                          value={editPassword}
+                          onChange={(e) => setEditPassword(e.target.value)}
+                        />
+                        <button
+                          className="toggle-password"
+                          onClick={() => setShowPassword(!showPassword)}
+                          type="button"
+                        >
+                          {showPassword ? '🙈' : '👁️'}
+                        </button>
+                      </div>
                     </td>
                     <td className="actionsCell">
                       <button className="btn btn-success" onClick={saveEdit}>

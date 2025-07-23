@@ -1,0 +1,31 @@
+.
+├── backend_estructura.txt
+├── LICENSE
+├── package.json
+├── package-lock.json
+└── src
+    ├── config
+    │   └── db.js
+    ├── controllers
+    │   ├── authController.js
+    │   ├── readingController.js
+    │   ├── sensorController.js
+    │   └── userController.js
+    ├── index.js
+    ├── middlewares
+    │   ├── apiKeyAuth.js
+    │   └── authMiddleware.js
+    ├── models
+    │   ├── Reading.js
+    │   ├── Sensor.js
+    │   └── User.js
+    ├── routes
+    │   ├── authRoutes.js
+    │   ├── readingRoutes.js
+    │   ├── sensorRoutes.js
+    │   └── userRoutes.js
+    └── services
+        ├── readingService.js
+        └── sensorService.js
+
+7 directories, 21 files

@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Calendar, Search, Sun, Zap, Shield, TrendingUp } from 'lucide-react';
+import { Calendar, Search, Sun, Zap, Shield, TrendingUp, Download } from 'lucide-react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Popover } from '@mui/material';
 import { es } from 'date-fns/locale';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
-import './CSS/SunPage.css';
+import * as XLSX from 'xlsx';
+import "./CSS/SunPage.css";
+import GenericTable from '../components/Table';
 
 interface Reading {
   id_lectura: number;
   temperatura?: number;
-  velocidad_viento?: number;
+  vv_s_wvt?: number;
   direccion_viento?: string;
   uv_index?: number;
   radiacion_solar?: number;
@@ -41,6 +43,36 @@ const SunPage = () => {
     date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   const formatQueryDate = (date: Date) => date.toISOString().slice(0, 10);
+
+  // Función para descargar los datos en Excel
+  const downloadExcel = () => {
+    const dataToDownload = solarData.length > 0 ? solarData : fallbackSolarData;
+    
+    if (dataToDownload.length === 0) {
+      alert('No hay datos para descargar. Por favor, realice una consulta primero.');
+      return;
+    }
+
+    // Preparar los datos para Excel
+    const data = dataToDownload.map(record => ({
+      'Fecha y Hora': new Date(record.fecha_hora).toLocaleString('es-ES'),
+      'Índice UV': record.uv_index,
+      'Nivel UV': getUVDescription(record.uv_index || 0),
+      'Radiación Solar (W/m²)': record.radiacion_solar,
+      'Nivel Radiación': getRadiationDescription(record.radiacion_solar || 0),
+      'Recomendación': (record.uv_index || 0) > 6 ? 'Usar protección' : 'Exposición segura'
+    }));
+
+    // Crear hoja de trabajo
+    const ws = XLSX.utils.json_to_sheet(data);
+    
+    // Crear libro de trabajo
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Datos Solares");
+    
+    // Generar archivo Excel
+    XLSX.writeFile(wb, `datos_solares_${formatQueryDate(startDate)}_${formatQueryDate(endDate)}.xlsx`);
+  };
 
   const getUVDescription = (uv: number) => {
     if (uv < 3) return 'Bajo';
@@ -76,7 +108,7 @@ const SunPage = () => {
 
       const allData: Reading[] = response.data.docs;
 
-      //filtrar lecturas que solo tengan de radiacion solar
+      //filtrar datos_meteo que solo tengan de radiacion solar
       const filteredSolar = allData.filter(d => d.uv_index !== undefined && d.radiacion_solar !== undefined);
 
       //ordenar por fecha ascendiente
@@ -119,7 +151,7 @@ const SunPage = () => {
           </div>
         </div>
         <div className="current-data-description">
-          {getUVDescription(currentSolar.uv_index)}
+          {getUVDescription(currentSolar.uv_index || 0)}
         </div>
       </div>
 
@@ -129,7 +161,7 @@ const SunPage = () => {
         <div className="current-data-value">{currentSolar.radiacion_solar}</div>
         <div className="current-data-unit">W/m²</div>
         <div className="current-data-description">
-          {getRadiationDescription(currentSolar.radiacion_solar)}
+          {getRadiationDescription(currentSolar.radiacion_solar || 0)}
         </div>
       </div>
 
@@ -137,10 +169,10 @@ const SunPage = () => {
         <Shield className="current-data-icon" size={32} />
         <div className="current-data-label">Recomendación</div>
         <div className="current-data-value" style={{ fontSize: '18px', lineHeight: '1.3' }}>
-          {currentSolar.uv_index > 6 ? 'Usar protección' : 'Exposición segura'}
+          {(currentSolar.uv_index || 0) > 6 ? 'Usar protección' : 'Exposición segura'}
         </div>
         <div className="current-data-description">
-          {currentSolar.uv_index > 6 ? 'Protector solar recomendado' : 'Condiciones normales'}
+          {(currentSolar.uv_index || 0) > 6 ? 'Protector solar recomendado' : 'Condiciones normales'}
         </div>
       </div>
     </div>
@@ -203,53 +235,37 @@ const SunPage = () => {
     </div>
   );
 
-  const renderDataTable = () => {
-    if (solarData.length === 0) {
-      return (
-        <div className="data-table-container slide-up">
-          <div className="data-table-header">
-            <h3 className="data-table-title">Resumen de Datos Registrados</h3>
-          </div>
-          <div className="data-table-columns">
-            <div className="data-table-column">Fecha y Hora</div>
-            <div className="data-table-column">Índice UV</div>
-            <div className="data-table-column">Radiación</div>
-          </div>
-          <div className="data-table-empty">
-            <TrendingUp className="data-table-empty-icon" />
-            <p className="data-table-empty-text">
-              Los datos detallados se cargarán aquí una vez procesada la consulta
-            </p>
-          </div>
-        </div>
-      );
-    }
+ 
 
-    return (
-      <div className="data-table-container slide-up">
-        <div className="data-table-header">
-          <h3 className="data-table-title">Resumen de Datos Registrados</h3>
-        </div>
-        <div className="data-table-columns">
-          <div className="data-table-column">Fecha y Hora</div>
-          <div className="data-table-column">Índice UV</div>
-          <div className="data-table-column">Radiación</div>
-        </div>
-        {solarData.map(record => (
-          <div key={record.id_lectura} className="data-table-row">
-            <div className="data-table-column">{new Date(record.fecha_hora).toLocaleString('es-ES')}</div>
-            <div className="data-table-column">{record.uv_index}</div>
-            <div className="data-table-column">{record.radiacion_solar}</div>
-          </div>
-        ))}
-      </div>
-    );
-  };
+    
+  const renderDataTable = () => (
+    <GenericTable
+      className="data-table fade-in"
+      title="Datos de Radiación Solar"
+      icon={Sun}
+      data={dataToUse}
+      columns={[
+        { header: 'Fecha y Hora', accessor: (row: { fecha_hora: string | number | Date; }) => new Date(row.fecha_hora).toLocaleString('es-ES') },
+        { header: 'Índice UV', accessor: (row: Reading) => row.uv_index !== undefined ? row.uv_index.toFixed(1) : 'N/A' },
+          { header: 'Radiación Solar (W/m²)', accessor: (row: Reading) => row.radiacion_solar !== undefined ? row.radiacion_solar.toFixed(1) : 'N/A' },
+         ]}
+    />
+  );
 
   return (
     <div className="container">
       <div className="content">
-        <h1 className="page-title">Radiación Solar</h1>
+        <div className="header-container">
+          <h1 className="page-title">Radiación Solar</h1>
+          <button 
+            className="download-button"
+            onClick={downloadExcel}
+            disabled={solarData.length === 0}
+          >
+            <Download size={18} />
+            Descargar Excel
+          </button>
+        </div>
 
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
           <div className="date-controls-wrapper">
@@ -318,7 +334,7 @@ const SunPage = () => {
               disableFuture
             />
           </Popover>
-        </LocalizationProvider>
+        </LocalizationProvider> 
 
         {isLoading ? (
           <div className="loading-state">
@@ -327,7 +343,7 @@ const SunPage = () => {
           </div>
         ) : showResults ? (
           <div className="results-container">
-            {renderCurrentData()}
+            {/* {renderCurrentData()} */}
             {renderChart()}
             {renderDataTable()}
           </div>

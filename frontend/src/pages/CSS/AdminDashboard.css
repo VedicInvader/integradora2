@@ -1,10 +1,29 @@
 /* AdminDashboard.css */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper .input {
+  width: 100%;
+  padding-right: 2rem;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
 
 :root {
   --primary: #0A7764;
   --secondary: #0A7764;
   --white: #FFFFFF;
-  --text-dark: #333333;
+  --text-dark: #38b7bb;
   --text-medium: #5A5A5A;
   --text-light: #8E8E93;
   --background: #F8F9FA;
@@ -12,14 +31,14 @@
   --border: #E0E0E0;
   --success: #4CAF50;
   --warning: #FF9800;
-  --error: #F44336;
+  --error: #bb241c;
   --input-background: #F5F5F5;
 }
 
 .admin-page, .container {
   min-height: 100vh;
   width: 100%;
-  padding-left: 280px; /* espacio para navbar expandida */
+  padding-left: 200%; /* espacio para navbar expandida */
   padding-top: 64px; /* espacio para topbar */
   background-color: var(--background);
   transition: padding-left 0.3s ease;

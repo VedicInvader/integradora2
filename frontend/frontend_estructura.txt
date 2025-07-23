@@ -17,7 +17,9 @@
 │   │   ├── css
 │   │   │   ├── Navbar.css
 │   │   │   └── UTD.png
-│   │   └── Navbar.tsx
+│   │   ├── LineChart.tsx
+│   │   ├── Navbar.tsx
+│   │   └── Table.tsx
 │   ├── context
 │   │   └── AuthContext.tsx
 │   ├── index.css
@@ -30,12 +32,20 @@
 │   │   │   ├── AboutScreen.css
 │   │   │   ├── AdminDashboard.css
 │   │   │   ├── AdminLoginPage.css
-│   │   │   ├── HomePage.css
 │   │   │   ├── SensorsPage.css
 │   │   │   ├── SunPage.css
 │   │   │   ├── TemperaturePage.css
 │   │   │   └── WindPage.css
 │   │   ├── HomePage.tsx
+│   │   ├── image
+│   │   │   ├── antena.jpeg
+│   │   │   ├── IMAG2.jpg
+│   │   │   ├── IMAG3.jpg
+│   │   │   ├── Logoooooo_LE_upscale_balanced_x4.jpg
+│   │   │   ├── Logoutd.webp
+│   │   │   ├── radiacion.jpeg
+│   │   │   ├── tem.jpeg
+│   │   │   └── viento.jpeg
 │   │   ├── SensorsPage.tsx
 │   │   ├── SunPage.tsx
 │   │   ├── TemperaturePage.tsx
@@ -48,6 +58,7 @@
 ├── tsconfig.app.json
 ├── tsconfig.json
 ├── tsconfig.node.json
-└── vite.config.ts
+├── vite.config.ts
+└── yarn.lock
 
-10 directories, 40 files
+11 directories, 50 files

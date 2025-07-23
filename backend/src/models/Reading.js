@@ -7,27 +7,27 @@ const Reading = sequelize.define('Reading', {
         autoIncrement: true,
         primaryKey: true
     },
-    flujo_energia: {
+    hfp01_avg: {
         type: DataTypes.FLOAT,
         allowNull: false
     },
-    dir_viento: {
+    dv_sd1_wvt: {
         type: DataTypes.FLOAT,
         allowNull: false
     },
-    dir_viento_prom: {
+    dv_d1_wvt: {
         type: DataTypes.FLOAT,
         allowNull: false
     },
-    velocidad_viento: {
+    vv_s_wvt: {
         type: DataTypes.FLOAT,
         allowNull: false,
     },
-    velocidad_viento_prom: {
+    vv_avg: {
         type: DataTypes.FLOAT,
         allowNull: false
     },
-    energia: {
+    rsmj_tot: {
         type: DataTypes.FLOAT,
         allowNull: false
     },
@@ -35,7 +35,7 @@ const Reading = sequelize.define('Reading', {
         type: DataTypes.FLOAT,
         allowNull: false
     },
-    temp_prom: {
+    ptemp_c_avg: {
         type: DataTypes.FLOAT,
         allowNull: false
     },
@@ -46,7 +46,7 @@ const Reading = sequelize.define('Reading', {
     },
 },
     {
-        tableName: 'lecturas',
+        tableName: 'datos_meteo',
         timestamps: false
     }
 );

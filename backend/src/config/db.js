@@ -7,6 +7,7 @@ const sequelize = new Sequelize(
     process.env.DB_PASS,
     {
         host: process.env.DB_HOST,
+         // ← ESTA LÍNEA ERA LA QUE FALTABA
         dialect: 'mysql',
         logging: false,
         define: {
@@ -18,10 +19,10 @@ const sequelize = new Sequelize(
 async function connectDB(){
     try {
         await sequelize.authenticate();
-        console.log("Conectado a la DB de MySQL");
+        console.log("Conectado a la DB de MariaDB/MySQL");
         await sequelize.sync();
     } catch (err){
-        console.error("Error al conectar con MySQL: ", err);
+        console.error("Error al conectar con MariaDB/MySQL: ", err);
         process.exit(1);
     }
 }

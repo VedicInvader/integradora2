@@ -11,6 +11,7 @@ import {
   MdError,
 } from 'react-icons/md';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 interface Sensor {
   id: number;
@@ -51,7 +52,10 @@ const SensorsPage: React.FC = () => {
       const res = await axios.get('http://localhost:4000/api/sensores', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSensors(res.data);
+      const filteredSensors = res.data.filter((s: Sensor) =>
+        ['temperature', 'wind', 'solar'].includes(s.type)
+      );
+      setSensors(filteredSensors);
       setError(null);
     } catch (err: any) {
       console.error('Error al obtener sensores', err);
@@ -59,7 +63,22 @@ const SensorsPage: React.FC = () => {
     }
   };
 
-  const toggleSensor = async (id: number) => {
+  const toggleSensor = async (id: number, activo: boolean) => {
+    const confirmMsg = activo
+      ? '¿Estás seguro de que quieres desactivar este sensor?'
+      : '¿Estás seguro de que quieres activar este sensor?';
+
+    const confirmed = await Swal.fire({
+      title: 'Confirmar acción',
+      text: confirmMsg,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí',
+      cancelButtonText: 'No',
+    });
+
+    if (!confirmed) return;
+
     if (!token) {
       setError('No autorizado: Falta token de autenticación');
       return;
@@ -91,7 +110,7 @@ const SensorsPage: React.FC = () => {
   return (
     <div className="container">
       <header className="header">
-        <button className="menuButton" onClick={() => alert('Abrir menú')}>
+        <button className="menuButton" onClick={() => Swal.fire('Abrir menú')}>
           <MdMenu size={28} color="#FFFFFF" />
         </button>
         <h1 className="title">Sensores IoT</h1>
@@ -145,7 +164,7 @@ const SensorsPage: React.FC = () => {
                     <input
                       type="checkbox"
                       checked={sensor.activo}
-                      onChange={() => toggleSensor(sensor.id)}
+                      onChange={() => toggleSensor(sensor.id, sensor.activo)}
                     />
                     <span className="slider round"></span>
                   </label>
@@ -169,10 +188,6 @@ const SensorsPage: React.FC = () => {
                     <span className="detailValue bold" style={{ color }}>
                       {sensor.lastReading}
                     </span>
-                  </div>
-                  <div className="detailRow">
-                    <span className="detailLabel">Actualizado:</span>
-                    <span className="detailValue">{sensor.lastUpdate}</span>
                   </div>
                   <div className="detailRow">
                     <span className="detailLabel">Estado:</span>

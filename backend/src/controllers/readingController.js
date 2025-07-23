@@ -10,11 +10,15 @@ exports.postReading = async (req, res, next) => {
 exports.getReadings = async (req, res, next) => {
     console.log('Query params: ', req.query);
     try {
-        const { page, limit, startDate, endDate } = req.query;
-        const data = await service.list(+page || 1, +limit || 20, startDate, endDate);
+        const page = +req.query.page || 1;
+        const limit = +req.query.limit || 100;
+        const { startDate, endDate } = req.query;
+
+        const data = await service.list(page, limit, startDate, endDate);
         res.json(data);
     } catch (err) { next(err) }
 };
+
 
 exports.getLatest = async (req, res, next) => {
     try {

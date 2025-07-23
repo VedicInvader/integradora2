@@ -1,31 +1,32 @@
-const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-const saltRounds = 10;
+const User = require('../models/User');
 
 const register = async (req, res) => {
   const { username, password } = req.body;
+
   if (!username || !password)
-    return res.status(400).json({ message: 'Faltan credenciales' });
+    return res.status(400).json({ message: 'Faltan campos requeridos' });
 
   try {
     const existingUser = await User.findOne({ where: { username } });
     if (existingUser)
       return res.status(409).json({ message: 'El usuario ya existe' });
 
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     await User.create({ username, password: hashedPassword });
 
-    res.status(201).json({ message: 'Usuario creado exitosamente' });
+    res.status(201).json({ message: 'Usuario registrado exitosamente' });
   } catch (error) {
-    console.error('Error en registro:', error);
+    console.error('Error al registrar usuario:', error);
     res.status(500).json({ message: 'Error del servidor' });
   }
 };
 
 const login = async (req, res) => {
   const { username, password } = req.body;
+
   if (!username || !password)
     return res.status(400).json({ message: 'Faltan credenciales' });
 
@@ -38,7 +39,6 @@ const login = async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ message: 'Contraseña incorrecta' });
 
-    //generacion de JWT
     const token = jwt.sign(
       { id: user.id, username: user.username },
       process.env.JWT_SECRET,
@@ -55,4 +55,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login, register };
+module.exports = { register, login };
