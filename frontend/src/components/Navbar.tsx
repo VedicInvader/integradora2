@@ -57,7 +57,7 @@ const useDrawerAutoClose = (
 
 const AppNavigator = () => {
   const { isLoggedIn, logout } = useAuth();
-  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
   const drawerRef = useRef(null);
 
@@ -79,12 +79,25 @@ const AppNavigator = () => {
   ];
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ 
+      display: 'flex',
+      // Ocultar scrollbars globalmente
+      '& *': {
+        '&::-webkit-scrollbar': {
+          display: 'none'
+        },
+        '-ms-overflow-style': 'none',
+        'scrollbar-width': 'none'
+      }
+    }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ 
         zIndex: 1300, 
-        backgroundColor: '#0A7764',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+        backgroundColor: '#0A7764', // Color verde original
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        transition: 'all 0.3s ease',
+        width: drawerOpen ? `calc(100% - ${drawerWidth}px)` : '100%',
+        ml: drawerOpen ? `${drawerWidth}px` : 0,
       }}>
         <Toolbar>
           <IconButton
@@ -134,21 +147,61 @@ const AppNavigator = () => {
           '& .MuiDrawer-paper': {
             width: drawerOpen ? drawerWidth : drawerWidthClosed,
             boxSizing: 'border-box',
-            backgroundColor: '#ffffff',
-            transition: 'width 0.3s ease',
+            backgroundColor: '#ffffff', // Fondo blanco siempre
+            transition: 'all 0.3s ease',
             overflow: 'hidden',
             borderRight: '1px solid rgba(10, 119, 100, 0.1)',
             boxShadow: '2px 0 10px rgba(0, 0, 0, 0.1)',
+            zIndex: drawerOpen ? 1400 : 1200,
+            // Ocultar scrollbars en el drawer
+            '&::-webkit-scrollbar': {
+              display: 'none'
+            },
+            '-ms-overflow-style': 'none',
+            'scrollbar-width': 'none'
           },
         }}
       >
-        <Toolbar />
+        {/* Toolbar con espacio ajustado */}
+        <Box sx={{ height: drawerOpen ? '16px' : '64px' }} /> {/* Menos espacio cuando está abierto */}
+
+        {/* Título dinámico cuando drawer está abierto */}
+        {drawerOpen && (
+          <Box sx={{
+            textAlign: 'center',
+            padding: '1px 2px 1px 2px',
+            
+            color: 'white',
+            position: 'relative',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '60px',
+              height: '3px',
+              background: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '2px'
+            }
+          }}>
+            <Typography 
+              variant="h6" 
+              sx={{
+                fontSize: '1px',
+                fontWeight: 600,
+               
+              }}
+            >
+            </Typography>
+          </Box>
+        )}
 
         {/* Header del Drawer */}
         <Box 
           sx={{
             textAlign: 'center',
-            padding: drawerOpen ? '30px 20px' : '20px 10px',
+            padding: drawerOpen ? '12px 20px 16px 20px' : '12px 10px', // Padding reducido cuando abierto
             background: '#ffffff',
             position: 'relative',
             overflow: 'hidden',
@@ -157,20 +210,22 @@ const AppNavigator = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            borderBottom: '1px solid rgba(10, 119, 100, 0.1)'
+            borderBottom: '1px solid rgba(10, 119, 100, 0.1)',
+            marginTop: drawerOpen ? '0px' : '8px' // Sin margen cuando está abierto
           }}
         >
           <img 
             src={logoUTD} 
             alt="Logo UTD" 
             style={{
-              width: drawerOpen ? '80px' : '48px',
-              height: drawerOpen ? '80px' : '48px',
-              margin: drawerOpen ? '0 auto 15px auto' : '0 auto',
-              borderRadius: '12px',
-              boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+              width: drawerOpen ? '85px' : '40px', // Ligeramente más pequeño cuando abierto
+              height: drawerOpen ? '85px' : '40px',
+              margin: drawerOpen ? '0 auto 10px auto' : '0 auto', // Menos margen inferior
+              borderRadius: '10px',
+              boxShadow: drawerOpen ? '0 4px 20px rgba(10, 119, 100, 0.3)' : '0 2px 12px rgba(10, 119, 100, 0.2)',
               objectFit: 'contain',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
+              border: drawerOpen ? '2px solid rgba(10, 119, 100, 0.1)' : 'none'
             }}
           />
           {drawerOpen && (
@@ -178,10 +233,11 @@ const AppNavigator = () => {
               <Typography 
                 variant="h6" 
                 sx={{
-                  fontSize: '18px',
+                  fontSize: '16px',
                   fontWeight: 600,
                   color: '#0A7764',
-                  marginBottom: '4px'
+                  marginBottom: '2px',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)'
                 }}
               >
                 Sistema Meteorológico
@@ -189,9 +245,10 @@ const AppNavigator = () => {
               <Typography 
                 variant="subtitle2" 
                 sx={{
-                  fontSize: '14px',
+                  fontSize: '13px',
                   color: '#50807d',
-                  fontWeight: 400
+                  fontWeight: 400,
+                  opacity: 0.9
                 }}
               >
                 Universidad Tecnológica de Durango
@@ -201,7 +258,16 @@ const AppNavigator = () => {
         </Box>
 
         {/* Contenido del Drawer */}
-        <Box sx={{ flex: 1, overflowY: 'auto' }}>
+        <Box sx={{ 
+          flex: 1, 
+          overflowY: 'auto',
+          // Ocultar scrollbars
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          },
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none'
+        }}>
           <List sx={{ padding: '8px 0' }}>
             {navItems.filter(item => item.show).map(({ path, icon, label, className }) => (
               <Link
@@ -235,7 +301,8 @@ const AppNavigator = () => {
                             className === 'login' ? '#6C757D' :
                             className === 'sensors' ? '#28A745' :
                             '#0A7764',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      fontSize: drawerOpen ? '24px' : '20px'
                     }}
                   >
                     {icon}
@@ -246,7 +313,8 @@ const AppNavigator = () => {
                       sx={{
                         '& .MuiTypography-root': {
                           fontWeight: 500,
-                          color: '#2C3E50'
+                          color: '#2C3E50', // Color de texto original
+                          fontSize: '15px'
                         }
                       }}
                     />
@@ -258,7 +326,10 @@ const AppNavigator = () => {
 
           {isLoggedIn && (
             <>
-              <Divider sx={{ margin: '8px 24px' }} />
+              <Divider sx={{ 
+                margin: '8px 24px',
+                backgroundColor: 'rgba(10, 119, 100, 0.1)'
+              }} />
               <ListItem
                 button
                 onClick={logout}
@@ -274,7 +345,12 @@ const AppNavigator = () => {
                   }
                 }}
               >
-                <ListItemIcon sx={{ minWidth: drawerOpen ? '40px' : 'auto', color: '#B00020', justifyContent: 'center' }}>
+                <ListItemIcon sx={{ 
+                  minWidth: drawerOpen ? '40px' : 'auto', 
+                  color: '#B00020', 
+                  justifyContent: 'center',
+                  fontSize: drawerOpen ? '24px' : '20px'
+                }}>
                   <ExitToAppIcon />
                 </ListItemIcon>
                 {drawerOpen && (
@@ -283,7 +359,8 @@ const AppNavigator = () => {
                     sx={{
                       '& .MuiTypography-root': {
                         fontWeight: 500,
-                        color: '#B00020'
+                        color: '#B00020',
+                        fontSize: '15px'
                       }
                     }}
                   />
@@ -300,7 +377,10 @@ const AppNavigator = () => {
             textAlign: 'center',
             borderTop: '1px solid rgba(10, 119, 100, 0.1)'
           }}>
-            <Typography variant="caption" sx= {{ color: '#6c757d', fontSize: '12px' }}>
+            <Typography variant="caption" sx={{ 
+              color: '#6c757d', 
+              fontSize: '12px' 
+            }}>
               © {new Date().getFullYear()} UTD - Todos los derechos reservados
             </Typography>
           </Box>
@@ -308,28 +388,28 @@ const AppNavigator = () => {
       </Drawer>
 
       {/* Contenido Principal */}
-    <Box
-  component="main"
-  sx={{
-    flexGrow: 1,
-    p: 3,
-    mt: 8,
-    ml: drawerOpen ? `${drawerWidth}px` : `${drawerWidthClosed}px`,
-    transition: 'margin-left 0.3s ease',
-    width: '100%',
-    minHeight: '100vh',
-    backgroundColor: '#f5f7fa',
-    // Agrega estas propiedades para ocultar scrollbars
-    overflow: 'hidden', // Oculta todas las barras de desplazamiento
-    '&::-webkit-scrollbar': {
-      display: 'none' // Oculta específicamente en navegadores WebKit (Chrome, Safari)
-    },
-    '-ms-overflow-style': 'none', // Oculta en IE y Edge
-    scrollbarWidth: 'none' // Oculta en Firefox
-  }}
->
-  <AppRoutes />
-</Box>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          mt: 8,
+          ml: drawerOpen ? `${drawerWidth}px` : `${drawerWidthClosed}px`,
+          transition: 'margin-left 0.3s ease',
+          width: '100%',
+          minHeight: '100vh',
+          backgroundColor: '#f5f7fa',
+          // Ocultar todas las barras de desplazamiento
+          overflow: 'hidden',
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          },
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none'
+        }}
+      >
+        <AppRoutes />
+      </Box>
     </Box>
   );
 };

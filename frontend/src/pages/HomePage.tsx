@@ -160,9 +160,9 @@ Longitud oeste: de 102° 28' a 107° 12'</span>
 // Estilos mejorados
 const styles = {
   container: {
-    maxWidth: '1200px',
+    maxWidth: '2200px',
     margin: '0 auto',
-    padding: '20px',
+    padding: '5px',
     backgroundColor: '#F8F9FA'
   },
   header: {

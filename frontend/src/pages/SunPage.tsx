@@ -267,75 +267,142 @@ const SunPage = () => {
           </button>
         </div>
 
-        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-          <div className="date-controls-wrapper">
-            <div className="date-controls-grid">
-              <div className="date-field">
-                <label className="date-field-label">Fecha inicial</label>
-                <div
-                  className="date-input-wrapper"
-                  onClick={(e) => handleOpenPicker(e as any, 'start')}
-                >
-                  <Calendar className="date-input-icon" size={20} />
-                  <span className="date-input-text">{formatDate(startDate)}</span>
-                  <span className="date-input-arrow">▼</span>
-                </div>
-              </div>
-
-              <div className="date-field">
-                <label className="date-field-label">Fecha final</label>
-                <div
-                  className="date-input-wrapper"
-                  onClick={(e) => handleOpenPicker(e as any, 'end')}
-                >
-                  <Calendar className="date-input-icon" size={20} />
-                  <span className="date-input-text">{formatDate(endDate)}</span>
-                  <span className="date-input-arrow">▼</span>
-                </div>
-              </div>
-            </div>
-
-            <button className="search-button" onClick={handleSearch} disabled={isLoading}>
-              <Search className="search-icon" size={20} />
-              {isLoading ? 'Consultando...' : 'Consultar Datos'}
-            </button>
-          </div>
-
-          <Popover
-            id={id}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClosePicker}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-            PaperProps={{
-              style: {
-                marginTop: 8,
-                borderRadius: 12,
-                boxShadow: '0px 8px 32px rgba(0,0,0,0.12)',
-              },
-            }}
-          >
-            <DatePicker
-              value={currentPicker === 'start' ? startDate : endDate}
-              onChange={(newValue) => {
-                if (newValue) {
-                  if (currentPicker === 'start') {
-                    setStartDate(newValue);
-                    if (endDate < newValue) setEndDate(newValue);
-                  } else {
-                    setEndDate(newValue);
-                  }
-                }
-                handleClosePicker();
-              }}
-              maxDate={new Date()}
-              minDate={currentPicker === 'end' ? startDate : undefined}
-              disableFuture
-            />
-          </Popover>
-        </LocalizationProvider> 
-
+       
+               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+                 <div className="weather-controls-wrapper" style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 20, boxShadow: '0 10px 30px rgba(0,0,0,0.1)', padding: 30 }}>
+                   <div className="weather-controls-grid">
+                     <div className="weather-date-field">
+                       <label className="weather-date-label">Fecha inicial</label>
+                       <div className="custom-datepicker">
+                         <DatePicker
+                           value={startDate}
+                           onChange={(newValue) => {
+                             if (newValue) {
+                               setStartDate(newValue);
+                               if (endDate < newValue) setEndDate(newValue);
+                             }
+                           }}
+                           maxDate={new Date()}
+                           disableFuture
+                           format="dd/MM/yyyy"
+                           slots={{
+                             openPickerIcon: Calendar,
+                           }}
+                           slotProps={{
+                             textField: {
+                               variant: 'outlined',
+                               fullWidth: true,
+                             },
+                             openPickerButton: {
+                               sx: {
+                                 color: '#0c4bd2',
+                                 borderRadius: '120px',
+                                
+                               },
+                             },
+                             inputAdornment: {
+                               position: 'start',
+                             },
+                           }}
+                           sx={{
+                             '& .MuiOutlinedInput-root': {
+                               borderRadius: '12px',
+                               backgroundColor: 'rgba(215, 137, 9, 0.08)',
+                               '&:hover': {
+                                 backgroundColor: 'rgba(215, 137, 9, 0.15)',
+                               },
+                               '& fieldset': {
+                                 borderColor: 'rgba(215, 137, 9, 0.3)',
+                               },
+                               '&:hover fieldset': {
+                                 borderColor: '#D78909',
+                               },
+                               '&.Mui-focused fieldset': {
+                                 borderColor: '#D78909',
+                                 borderWidth: '2px',
+                               },
+                             },
+                             '& .MuiInputBase-input': {
+                               padding: '14px 14px 14px 0',
+                               color: '#2c3e50',
+                               fontWeight: '500',
+                             },
+                           }}
+                         />
+                       </div>
+                     </div>
+       
+                     <div className="weather-date-field">
+                       <label className="weather-date-label">Fecha final</label>
+                       <div className="custom-datepicker">
+                         <DatePicker
+                           value={endDate}
+                           onChange={(newValue) => {
+                             if (newValue) {
+                               setEndDate(newValue);
+                             }
+                           }}
+                           minDate={startDate}
+                           maxDate={new Date()}
+                           disableFuture
+                           format="dd/MM/yyyy"
+                           slots={{
+                             openPickerIcon: Calendar,
+                           }}
+                           slotProps={{
+                             textField: {
+                               variant: 'outlined',
+                               fullWidth: true,
+                             },
+                             openPickerButton: {
+                               sx: {
+                                 color: '#0c4bd2',
+                               },
+                             },
+                             inputAdornment: {
+                               position: 'start',
+                             },
+                           }}
+                           sx={{
+                             '& .MuiOutlinedInput-root': {
+                               borderRadius: '12px',
+                               backgroundColor: 'rgba(215, 137, 9, 0.08)',
+                               '&:hover': {
+                                 backgroundColor: 'rgba(215, 137, 9, 0.15)',
+                               },
+                               '& fieldset': {
+                                 borderColor: 'rgba(215, 137, 9, 0.3)',
+                               },
+                               '&:hover fieldset': {
+                                 borderColor: '#D78909',
+                               },
+                               '&.Mui-focused fieldset': {
+                                 borderColor: '#D78909',
+                                 borderWidth: '2px',
+                               },
+                             },
+                             '& .MuiInputBase-input': {
+                               padding: '14px 14px 14px 0',
+                               color: '#2c3e50',
+                               fontWeight: '500',
+                             },
+                           }}
+                         />
+                       </div>
+                     </div>
+                   </div>
+                   <div className="button-center-container">
+                     <button
+                       className="weather-search-button"
+                       onClick={handleSearch}
+                       disabled={isLoading}
+                     >
+                       <Search className="weather-search-icon" size={20} />
+                       {isLoading ? 'Consultando...' : 'Consultar Datos'}
+                     </button>
+                   </div>
+                 </div>
+               </LocalizationProvider>
         {isLoading ? (
           <div className="loading-state">
             <div className="loading-spinner"></div>
